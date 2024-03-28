@@ -3,14 +3,17 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import personService from './services/persons'
-
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterQuery, setFilterQuery] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     personService
@@ -36,18 +39,28 @@ const App = () => {
         personToChange.number = newNumber
         personService
         .update(personToChange.id, personToChange)
-        .then(data => setPersons(remainingPersons.concat(personToChange)))
-      
+        .then(data => {
+          setPersons(remainingPersons.concat(personToChange))
+          setNotification(`${newName} was updated!`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
+        })
     } else {
       const newPerson = {
         name: newName,
         number: newNumber
       }
-
       personService
       .create(newPerson)
       .then(person => {
         setPersons(persons.concat(person))
+
+        setNotification(`${newPerson.name} was added!`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
+
         setNewName('')
         setNewNumber('')
       })
@@ -67,6 +80,8 @@ const App = () => {
   }
 
   const removePerson = (id) => {
+    const person = persons.filter((person) => person.id == id)[0]
+    console.log(person)
     if (window.confirm('are you sure?')) {
       personService
       .destroy(id)
@@ -74,12 +89,22 @@ const App = () => {
           const newPersons = persons.filter((person) => person.id != id)
           setPersons(newPersons)
       })
+      .catch(error => {
+        setError(
+          `${person.name} was already deleted from server`
+        )
+        setTimeout(() => {
+          setError(null)
+        }, 5000)
+      })
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} type='message' />
+      <Notification message={error} type='error' />
       <Filter value={filterQuery} onChange={handleFilter} />
 
       <h2>Add new</h2>
