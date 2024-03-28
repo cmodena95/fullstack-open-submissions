@@ -29,7 +29,15 @@ const App = () => {
 
     const names = persons.map((person) => person.name)
     if (names.includes(newName)) {
-      alert(`${newName} already added to phonebook`)
+      window.alert(`${newName} is already in your phonebook, would you like to replace the number?`)
+        const personToChange = persons.filter((person) => person.name == newName)[0]
+        console.log('hi')
+        const remainingPersons = persons.filter((person) => person.name != newName)
+        personToChange.number = newNumber
+        personService
+        .update(personToChange.id, personToChange)
+        .then(data => setPersons(remainingPersons.concat(personToChange)))
+      
     } else {
       const newPerson = {
         name: newName,
