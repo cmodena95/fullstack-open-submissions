@@ -59,12 +59,14 @@ const App = () => {
   }
 
   const removePerson = (id) => {
-    personService
-        .destroy(id)
-        .then(data => {
-            const newPersons = persons.filter((person) => person.id != id)
-            setPersons(newPersons)
-        })
+    if (window.confirm('are you sure?')) {
+      personService
+      .destroy(id)
+      .then(data => {
+          const newPersons = persons.filter((person) => person.id != id)
+          setPersons(newPersons)
+      })
+    }
   }
 
   return (
