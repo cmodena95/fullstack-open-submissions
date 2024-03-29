@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Countries from './components/Countries'
 import Country from './components/Country'
 import countryService from './services/countries'
+import weatherService from './services/weather'
 
 function App() {
   const [countries, setCountries] = useState([])
@@ -26,9 +27,15 @@ function App() {
           countryService
             .getCountry(countriesToShow[0].name.common)
             .then(data => {
+
+              const capitalCity = data.capital[0]
+              weatherService.getWeather(capitalCity)
+                .then(weatherData => {
+                  setCountry(Object.assign(data, weatherData))
+                })
+
               setCountries([])
               setMessage('')
-              setCountry(data)
             })
         } else if (newQuery == '') {
           setMessage('')
@@ -41,15 +48,22 @@ function App() {
         }
       })
   }
+  
 
   const displayShow = (country) => {
     console.log(country)
     countryService
     .getCountry(country)
     .then(data => {
+
+      const capitalCity = data.capital[0]
+      weatherService.getWeather(capitalCity)
+        .then(weatherData => {
+          setCountry(Object.assign(data, weatherData))
+      })
+
       setCountries([])
       setMessage('')
-      setCountry(data)
     })
   }
 
@@ -59,7 +73,7 @@ function App() {
       <input value={query} onChange={searchQuery}/>
       <p>{message}</p>
       <Countries countries={countries} show={displayShow}/>
-      <Country country={country}/>
+      <Country country={country} />
     </>
   )
 }
