@@ -42,12 +42,23 @@ function App() {
       })
   }
 
+  const displayShow = (country) => {
+    console.log(country)
+    countryService
+    .getCountry(country)
+    .then(data => {
+      setCountries([])
+      setMessage('')
+      setCountry(data)
+    })
+  }
+
   return (
     <>
       <p>Find countries</p>
       <input value={query} onChange={searchQuery}/>
       <p>{message}</p>
-      <Countries countries={countries}/>
+      <Countries countries={countries} show={displayShow}/>
       <Country country={country}/>
     </>
   )

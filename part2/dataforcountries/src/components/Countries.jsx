@@ -1,7 +1,7 @@
-const Countries = ({ countries }) => {
+const Countries = ({ countries, show }) => {
     return (
         <div>
-            {countries.map((country) => <p key={country.name.common}>{country.name.common}</p>)}
+            {countries.map((country) => <p key={country.name.common}>{country.name.common} <button onClick={() => show(country.name.common)}>Show</button></p>)}
         </div>
     )
 }
